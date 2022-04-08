@@ -1,13 +1,51 @@
 \chapter{Benutzeranleitung}\label{ch:benutzeranleitung}
 
+\section{Verzeichnisstuktur}\label{sec:verzeichnisstruktur}
+Im \textbf{Wurzelverzeichnis} sind zu finden:
+\begin{itemize}[noitemsep]
+    \item Die kompilierte, ausführbare .jar-Datei mit dem Namen \glqq GroPro-1.0-\\SNAPSHOT.jar\grqq{}.
+    \item Das Batch-Skript zur automatischen Ausführung der Test mit Namen \glqq AutoTests.cmd\grqq{}.
+    \item Der Ordner \glqq GroProJava\grqq{}, in dem der Source-Code des Maven-Projekts zu finden ist.
+    \item Der Ordner \glqq TestEingaben\grqq{}, in dem die Beispiel-Eingaben als Text-Dateien liegen.
+    \item Der Ordner \glqq TestAusgaben\grqq{}, der beim Ausführen des Programms erstellt wird und die Ergebnisse des Problems enthält.
+    \item Die Dokumentation als PDF-Dokument.
+\end{itemize}
+
 
 \section{Vorbereiten des Systems}\label{sec:vorbereiten-des-systems}
 
 \subsection{Systemvoraussetzungen}\label{subsec:systemvoraussetzungen}
+Damit sichergestellt ist, dass das Programm ausführbar ist, sollte Windows 10 als Betriebssystem verwendet werden.
+Zudem muss eine JRE mit mindestens Version 8 installiert sein.
+Das Bin-Verzeichnis dieser JRE sollte in den Umgebungsvariablen im Path aufgenommen werden.
 
 \subsection{Installation}\label{subsec:installation}
-
+Zur Installation muss lediglich die Zip-Datei entpackt werden.
 
 \section{Programmaufruf}\label{sec:programmaufruf}
+Nachdem die abgegebene Zip-Datei entpackt wurde, kann das Programm über den Befehl
+\begin{center}
+    \colorbox{gray!20}{
+        \begin{minipage}{0.9\textwidth}
+            java -jar GroPro-1.0-SNAPSHOT.jar Beispiel1.txt 1
+        \end{minipage}
+    }
+\end{center}
+im CMD-Fenster gestartet werden.
+Dabei sind die letzten beiden Parameter der Dateiname des Tests und die Nummer des Tests.
 
 \section{Testen der Beispiele}\label{sec:testen-der-beispiele}
+Zum Ausführen der automatischen Tests muss die Datei \glqq AutoTests.cmd \grqq{} mit einem Doppelklick gestartet werden.
+Die Ergebnisse landen im oben beschriebenen Output-Verzeichnis.
+
+\section{Kompilieren}\label{sec:kompilieren}
+Zum Erzeugen der ausführbaren Jar-Datei kann das Kommando
+\begin{center}
+    \colorbox{gray!20}{
+        \begin{minipage}{0.9\textwidth}
+            mvn package
+        \end{minipage}
+    }
+\end{center}
+verwendet werden.
+

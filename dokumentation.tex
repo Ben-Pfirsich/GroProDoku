@@ -12,18 +12,34 @@
 \newcommand{\locationDocument}{Köln}
 \newcommand{\dateDocument}{\today}
 
+
 \title{\titleDocument}
 \author{\authorDocument}
 \date{\dateDocument}
 
+
+\newcommand{\ArbeitTitelseite}{Dokumentation der Praktischen Arbeit\\ zur Prüfung zum\\ Mathematisch-technischen Softwareentwickler}
+\newcommand{\ArbeitKopfzeile}{Dokumentation der Praktischen Arbeit 2012}
+\newcommand{\ArbeitThema}{Thema}
+
+\newcommand{\Autor}{Ben Pietsch}
+\newcommand{\Pruefungsnummer}{}
+
+\newcommand{\Programmiersprache}{Java}
+\newcommand{\Compiler}{}
+\newcommand{\Rechner}{}
+\newcommand{\Betriebssystem}{Windows 10}
+
+
 %Style importieren:
 \usepackage{dokumentation}
-
 
 \begin{document}
     % ============ Anfang =============
     % Titelseite
-    \include{title}
+%    \SetWatermarkLightness{0.5}
+%    \SetWatermarkText{\includegraphics[angle=-45]{switch-spilles}}
+    \include{title-alternativ}
 
     \tableofcontents
 
@@ -33,7 +49,7 @@
     \include{chapters/3-Programmbeschreibung}
     \include{chapters/4-Testdokumentation}
     \include{chapters/5-ZusammenfassungUndAusblick}
-    \addtocontents{toc}{\protect\newpage}
+%    \addtocontents{toc}{\protect\newpage}
     % ============= Buchstabenteil ==============
     \renewcommand{\thechapter}{\Alph{chapter}}%
     \setcounter{chapter}{0}
@@ -44,5 +60,5 @@
     \include{chapters/E-Erklaerung}
     \include{chapters/F-Aufgabenstellung}
     \include{chapters/G-Quellcode}
-    \include{chapters/H-In-Out-Put-Testdokumentation}
+%    \include{chapters/H-In-Out-Put-Testdokumentation}
 \end{document}

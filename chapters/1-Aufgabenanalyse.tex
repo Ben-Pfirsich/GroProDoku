@@ -3,22 +3,60 @@
 
 \section{Interpretation der Aufgabe}\label{sec:interpretation-der-aufgabe}
 
+Ein hügliger Landabschnitt soll flächendeckend mit Internet versorgt werden.
+Dazu sollen an geeigneten Positionen Antennen aufgestellt werden.
+
+Der Landabschnitt ist rechteckig und kann durch ein Gitter aus Höhenangaben beschrieben werden.
+Die Gitterpunkte sind in gleichmäßigen Abständen von 100 Metern angeordnet.
+Ein einzelner Punkt kann also durch ein Tripel aus x, y und z-Koordinate beschrieben werden.
+Dabei hat der Punkt in der linken, oberen Ecke die Koordinaten $x = 0$ und $y = 0$.
+Die z-Koordinate, also die Höhe in einem bestimmten Punkt, kann Werte zwischen $0$ und $6$ annehmen.
+Diese Angaben sind in 100 Metern zu interpretieren.
+$z=6$ meint also eine Höhe von 600 Metern.
+Die Gitterpunkte habe Verbindungsgeraden zu ihren direkten Nachbarn in horizontaler und vertikaler Richtung.
+Diese Linien bilden die Oberfläche des Landabschnittes.
+Es sollen nun Antennen auf den Gitterpunkten platziert werden, sodass der gesamte Landabschnitt mit Internet versorgt wird.
+Das ist der Fall, wenn alle Gitterpunkte, auf denen keine Antenne steht, durch eine direkte Gerade von einer der Antenne erreicht werden kann, ohne dass dabei ein Hügel im Weg ist.
+Die Antennen haben eine höhe von 10 Metern, das heißt die z-Koordinate ist an dieser Stelle um 0.1 erhöht.
+Das Signal einer Antenne kann entweder direkt durch einen zu hohen Gitterpunkt blockiert werden oder durch eine Verbindungsgerade von zwei benachbarten Gitterpunkten.
+Wenn das Signal unterhalb des Punktes, bzw. der Verbindungsgeraden verläuft, wird es blockiert.
+
+Es soll ein Algorithmus umgesetzt werden, der die minimale Anzahl von Antennen und deren Position für einen beliebigen Landabschnitt ermitteln kann.
 
 \section{Fehlerarten}\label{sec:fehlerarten}
 
+Beim Ausführen des Programms kann es zu unterschiedlichen Arten von Fehlern kommen.
+Insbesondere beim Einlesen und Ausgeben der Dateien sind viele Fehlersituationen möglich.
+
 \subsection{Technische Fehler}\label{subsec:technische-fehler}
+Es kann vorkommen, dass das Programm entweder keinen Zugriff auf eine Eingabedatei hat, oder diese nicht existiert.
+Ähnlich kann beim Ausgeben der Dateien der schreibende Zugriff gesperrt sein.
+Das kann passieren, wenn z.B. eine zu überschreibenden Datei geöffnet ist.
 
 \subsection{Syntaktische Fehler}\label{subsec:syntaktische-fehler}
+Die Eingabe Datei muss einem strengen Syntax genügen:
+\begin{itemize}[noitemsep]
+    \item In der zweiten Zeile steht die Beschreibung des Problems, eingeleitet durch ein Semikolon
+    \item In der fünften Zeile sind die Dimensionen des Höhen-Feldes als Integer, getrennt durch ein Leerzeichen, angegeben: [x y]
+    \item Ab der siebten Zeile sind die Höhenangaben als Integer Werte angegeben.
+    Jede Zeile steht für einen Schritt in y-Richtung, und in jeder Zeile stehen durch leerzeichen getrennte Integer, die als x Schritte in x-Richtung gedeutet werden sollen.
+    Die Anzahl der Einträge in den Zeilen müssen nicht genau der x-Dimension entsprechen.
+    Wenn weniger Einträge in einer Zeile sind, werden die restlichen Einträge mit dem letzten gelesen Wert aufgefüllt.
+\end{itemize}
 
 \subsection{Semantische Fehler}\label{subsec:semantische-fehler}
-
+Die Höhenangaben dürfen nur ganzzahlige Werte im Intervall [0, 6] annehmen.
+Genau so dürfen die Dimensionen keine negativen Werte annehmen und sollten zudem aus Performanz-Gründen nach oben hin beschränkt sein.
 
 \section{Fehlerbehandlung}\label{sec:fehlerbehandlung}
+Bei allen bisher beschriebenen Fehlern wird eine passende Meldung auf der Konsole ausgegeben und das Programm beendet.
 
-\subsection{Technische Fehler}\label{subsec:technische-fehler-behandlung}
-
-\subsection{Syntaktische Fehler}\label{subsec:syntaktische-fehler-behandlung}
-
-\subsection{Semantische Fehler}\label{subsec:semantische-fehler-behandlung}
+%\subsection{Technische Fehler}\label{subsec:technische-fehler-behandlung}
+%
+%\subsection{Syntaktische Fehler}\label{subsec:syntaktische-fehler-behandlung}
+%
+%\subsection{Semantische Fehler}\label{subsec:semantische-fehler-behandlung}
 
 \subsection{Sonderfälle}\label{subsec:sonderfaelle}
+Es kann sein, dass als y-Dimension ein geringerer Wert eingetragen ist, als Zeilen vorhanden sind.
+In diesem Fall werden die Zeilen trotzdem eingelesen und die y-Dimension aktualisiert.
