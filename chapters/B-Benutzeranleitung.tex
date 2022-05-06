@@ -1,23 +1,25 @@
 \chapter{Benutzeranleitung}\label{ch:benutzeranleitung}
 
-\section{Verzeichnisstuktur}\label{sec:verzeichnisstruktur}
+\section{Verzeichnisstruktur}\label{sec:verzeichnisstruktur}
 Im \textbf{Wurzelverzeichnis} sind zu finden:
 \begin{itemize}[noitemsep]
-    \item Die kompilierte, ausführbare .jar-Datei mit dem Namen \glqq GroPro-1.0-\\SNAPSHOT.jar\grqq{}.
-    \item Das Batch-Skript zur automatischen Ausführung der Test mit Namen \glqq AutoTests.cmd\grqq{}.
-    \item Der Ordner \glqq GroProJava\grqq{}, in dem der Source-Code des Maven-Projekts zu finden ist.
+    \item Die kompilierte, ausführbare .jar-Datei, mit dem Namen \glqq GroPro-1.0-\\SNAPSHOT.jar\grqq{}.
+    \item Das Batch-Skript zur automatischen Ausführung der Tests mit Namen \glqq AutomatischeTests.cmd\grqq{}.
+    \item Der Ordner \glqq src\grqq{}, in dem der Source-Code des Java-Projekts zu finden ist.
     \item Der Ordner \glqq TestEingaben\grqq{}, in dem die Beispiel-Eingaben als Text-Dateien liegen.
-    \item Der Ordner \glqq TestAusgaben\grqq{}, der beim Ausführen des Programms erstellt wird und die Ergebnisse des Problems enthält.
+    \item Der Ordner \glqq TestAusgaben\grqq{}, der beim Ausführen des Programms erstellt wird und die Ergebnisse des Programmdurchlaufs enthält.
     \item Die Dokumentation als PDF-Dokument.
+    \item Eine Datei \glqq pom.xml\grqq{}, die zum Bauen der Jar-Datei benötigt wird.
 \end{itemize}
 
 
 \section{Vorbereiten des Systems}\label{sec:vorbereiten-des-systems}
 
 \subsection{Systemvoraussetzungen}\label{subsec:systemvoraussetzungen}
-Damit sichergestellt ist, dass das Programm ausführbar ist, sollte Windows 10 als Betriebssystem verwendet werden.
-Zudem muss eine JRE mit mindestens Version 8 installiert sein.
-Das Bin-Verzeichnis dieser JRE sollte in den Umgebungsvariablen im Path aufgenommen werden.
+Damit sichergestellt ist, dass das Programm ausführbar ist, sollte Windows 10 (\url{https://www.microsoft.com/de-de/software-download/windows10}) als Betriebssystem verwendet werden.
+Zudem muss eine JRE oder JDK mit mindestens Version 8 installiert sein (Vorzugsweise die JDK verwenden, da diese auch zum Kompilieren benötigt wird).
+Das Bin-Verzeichnis dieser Installation sollte in den Umgebungsvariablen im Path aufgenommen werden.
+Unter \url{https://jdk.java.net/} werden unterschiedliche Versionen der OpenJDK von Oracle zum Download bereitgestellt.
 
 \subsection{Installation}\label{subsec:installation}
 Zur Installation muss lediglich die Zip-Datei entpackt werden.
@@ -36,10 +38,17 @@ Dabei sind die letzten beiden Parameter der Dateiname des Tests und die Nummer d
 
 \section{Testen der Beispiele}\label{sec:testen-der-beispiele}
 Zum Ausführen der automatischen Tests muss die Datei \glqq AutoTests.cmd \grqq{} mit einem Doppelklick gestartet werden.
+Dadurch wird das Programm jeweils mit den, im Ordner \glqq TestEingaben \grqq{} enthaltenen, Dateien aufgerufen.
 Die Ergebnisse landen im oben beschriebenen Output-Verzeichnis.
 
 \section{Kompilieren}\label{sec:kompilieren}
-Zum Erzeugen der ausführbaren Jar-Datei kann das Kommando
+
+Zum Erzeugen der ausführbaren Jar-Datei wird Maven verwendet.
+Unter \url{https://maven.apache.org/download.cgi} kann eine Maven-Installation als Zip-Datei heruntergeladen werden (vorzugsweise Version 3.8.5 verwenden).
+Auch hier muss das Bin-Verzeichnis der Installation in den Umgebungsvariablen im Path eingetragen werden.
+Damit Maven funktioniert, muss zudem eine JDK installiert sein (siehe Abschnitt \ref{sec:vorbereiten-des-systems}).
+
+Nun kann über Öffnen eines CMD-Fensters im Wurzelverzeichnis das Kommando
 \begin{center}
     \colorbox{gray!20}{
         \begin{minipage}{0.9\textwidth}
@@ -48,3 +57,4 @@ Zum Erzeugen der ausführbaren Jar-Datei kann das Kommando
     }
 \end{center}
 verwendet werden.
+Die ausführbare Jar-Datei befindet sich im Ordner \glqq target\grqq{}.

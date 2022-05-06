@@ -12,18 +12,26 @@
 \newcommand{\locationDocument}{Köln}
 \newcommand{\dateDocument}{\today}
 
+
 \title{\titleDocument}
 \author{\authorDocument}
 \date{\dateDocument}
 
+
+\newcommand{\ArbeitTitelseite}{Dokumentation der Praktischen Arbeit\\ zur Prüfung zum\\ Mathematisch-technischen Softwareentwickler}
+\newcommand{\ArbeitThema}{Thema}
+
+\newcommand{\Autor}{Ben Pietsch}
+\newcommand{\Pruefungsnummer}{142 18728}
+
+\newcommand{\Programmiersprache}{Java}
+
 %Style importieren:
 \usepackage{dokumentation}
 
-
 \begin{document}
     % ============ Anfang =============
-    % Titelseite
-    \include{title}
+    \include{title-alternativ}
 
     \tableofcontents
 
@@ -33,7 +41,7 @@
     \include{chapters/3-Programmbeschreibung}
     \include{chapters/4-Testdokumentation}
     \include{chapters/5-ZusammenfassungUndAusblick}
-    \addtocontents{toc}{\protect\newpage}
+%    \addtocontents{toc}{\protect\newpage}
     % ============= Buchstabenteil ==============
     \renewcommand{\thechapter}{\Alph{chapter}}%
     \setcounter{chapter}{0}
@@ -44,5 +52,5 @@
     \include{chapters/E-Erklaerung}
     \include{chapters/F-Aufgabenstellung}
     \include{chapters/G-Quellcode}
-    \include{chapters/H-In-Out-Put-Testdokumentation}
+%    \include{chapters/H-In-Out-Put-Testdokumentation}
 \end{document}
