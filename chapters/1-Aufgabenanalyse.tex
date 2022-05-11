@@ -33,18 +33,31 @@ Wenn die Ausgabe eines Datensatzes erfolgreich war, wird das an zentraler Stelle
 So kann erkannt werden, wenn alle Eingabedateien erfolgreich verarbeitet und ausgegeben wurden.
 Dann ist das Kriterium zum Programmende erreicht und alle Threads können beendet werden.
 
+\section{Mathematische Beschreibung der vier Algorithmen}\label{sec:mat-beschreibung}
+Die Verarbeitung wird jeweils auf einem einzelnen Datensatz aus der Eingabe durchgeführt.
+Dieser Datensatz kann beschrieben werden durch eine Liste aus Datenpunkten, die jeweils einen ~x- und einen y-Wert beinhalten.
+Aus den Datenpunkten wird in vier Verarbeitungsschritten das gewünschte Ergebnis gewonnen.
+
+\subsection{Umrechnung und Normierung der Daten}\label{subsec:umrechnung-und-normierung}
+Im ersten Schritt werden sowohl die \~x-Werte, als auch die y-Werte manipuliert.
+
+Die y-Werte werden normiert, indem jeder einzelne y-Wert durch den maximalen y-Wert geteilt wird.
+Dafür werden zwei einfache Iterationen über die Datenliste benötigt:
+Die erste zum Bestimmen des maximalen y-Wertes und die zweite um jeden y-Wert mit dem Maximum zu skalieren.
+
+
 
 \section{Eingabeformat}\label{sec:eingabe-format}
 Wie bereits beschrieben liegen die Datensätze in Textdateien.
-In diesen Dateien sind die einzelnen Messpunkte, bestehend aus x- und y-Wert, zeilenweise zu finden.
+In diesen Dateien sind die einzelnen Messpunkte, bestehend aus \~x- und y-Wert, zeilenweise zu finden.
 An erster Stelle steht der y-Wert.
-Getrennt durch einen Tabulator folgt der x-Wert.
+Getrennt durch einen Tabulator folgt der \~x-Wert.
 Zeilen die mit einem \#-Zeichen beginnen sind Kommentare und können ignoriert werden.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\linewidth]{images/eingabeDat_bsp}
     \caption{
-        Beispiel einer Eingabedatei.
+        Beispielausschnitt einer Eingabedatei.
     }
     \label{fig:eingabe_dat_beispiel}
 \end{figure}
@@ -63,7 +76,7 @@ Dabei soll das folgende Format verwendet werden:
 In den folgenden Zeilen sollen wieder zeilenweise die verarbeiteten Messpunkte stehen.
 Pro Zeile werden, jeweils getrennt durch einen Tabulator, erwartet:
 \begin{itemize}[noitemsep]
-    \item Der umgeformte und geglättete x-Wert.
+    \item Der umgeformte und geglättete \~x-Wert.
     \item Der skalierte y-Wert.
     \item Der Wert der oberen Einhüllenden an der passenden Stelle.
 \end{itemize}
@@ -72,26 +85,48 @@ Pro Zeile werden, jeweils getrennt durch einen Tabulator, erwartet:
     \centering
     \includegraphics[width=\linewidth]{images/ausgabeDat_bsp}
     \caption{
-        Beispiel einer Ausgabedatei.
+        Beispielausschnitt einer Ausgabedatei.
     }
     \label{fig:ausgabe_dat_beispiel}
 \end{figure}
 
 \section{Fehlerarten}\label{sec:fehlerarten}
+Beim ausführen des Programms kann es zu unterschiedlichen Fehlern kommen.
+Diese werden im Folgenden beschrieben.
 
 \subsection{Technische Fehler}\label{subsec:technische-fehler}
+Das Programm geht davon aus, dass die Anzahl der Testdateien mit dem angegebenen Wert übereinstimmt und dass die Dateien die oben genannte Namenskonvention einhalten.
+Ist das nicht der Fall, werden Zugriff auf die Dateien Fehler geworfen.
+Es kann auch sein, dass eine datei beim Zugriff blockiert ist (z.B. durch ein anderes Programm oder wegen fehlenden Berechtigungen).
+Dies würde ebenso zu einer Fehlersituation führen.
+
+Auch bei der Ausgabe kann es beim Schreiben der Dateien zu technischen Fehler kommen.
 
 \subsection{Syntaktische Fehler}\label{subsec:syntaktische-fehler}
+Syntaktische Fehler treten auf, wenn die Eingabedateien nicht im richtigen Format vorliegen (Siehe Abschnitt~\ref{sec:eingabe-format}).
+Z.B. wenn statt dem Tabulator ein anderes Trennzeichen verwendet wird oder mehr als zwei Einträge in einer Zeile zu finden sind.
 
 \subsection{Semantische Fehler}\label{subsec:semantische-fehler}
-
+Auch semantische Fehler müssen bei der Eingabe überprüft werden.
+Es sind in den Eingabedateien nur positive Ganzzahlen als \~x- und y-Werte erlaubt.
+Außerdem sollten mindestens 500 gültige Einträge pro Datei vorhanden sein.
+Sonst kommt es beim Glätten der \~x-Werte nach der Berechnung $n = \lfloor 0.002 \cdot N \rfloor - 1$ zu Problemen.
+Ist $N$ hier kleiner als 500, dann wird $n$ negative und eignet sich nicht als Obergrenze für die Summe.
 
 \section{Fehlerbehandlung}\label{sec:fehlerbehandlung}
+Die oben spezifizierten Fehler benötigen alle eine sinnvolle Fehlerbehandlung.
+Diese wird nun festgelegt.
 
 \subsection{Technische Fehler}\label{subsec:technische-fehler-behandlung}
+Wenn eine Datei sich nicht zum Lesen oder Schreiben öffnen lässt, sollte eine entsprechende Meldung auf der Konsole ausgegeben werden.
+Zudem sollte diese Datei in der Programmsteuerung als bearbeitet markiert werden, bzw. der Zähler der bearbeiteten Dateien hochgezähl werden.
+Ansonsten würde das Programm endlos weiterlaufen.
 
-\subsection{Syntaktische Fehler}\label{subsec:syntaktische-fehler-behandlung}
+\subsection{Syntaktische und Semantische Fehler}\label{subsec:syntaktische-semant-fehler-behandlung}
+Fehlerhafte Zeilen in den Eingabedateien werden ebenfalls auf der Konsole gemeldet und für die Verarbeitung ignoriert.
+Hat eine Datei in mehr als 50\% der Zeilen syntaktische oder semantische Fehler, wird sie nicht weiterverarbeitet.
+Selbiges gilt, wenn weniger als 500 fehlerfreie Einträge vorhanden sind.
 
-\subsection{Semantische Fehler}\label{subsec:semantische-fehler-behandlung}
 
-\subsection{Sonderfälle}\label{subsec:sonderfaelle}
+
+%\subsection{Sonderfälle}\label{subsec:sonderfaelle}
