@@ -4,13 +4,24 @@
 Aus den in der Aufgabenanalyse beschriebenen Gründen, wurden die drei Komponenten Eingabe, Ausgabe und Verarbeitung als jeweils eigenen Threads implementiert.
 Die Klassen implementieren in der Java-Anwendung das Interface Runnable und können dadurch als eigene, unabhängige Prozesse gestartet werden.
 Die Initialisierung der Prozess wird in einer zentralen Steuerungsklasse durchgeführt.
-Die Steuerungsklasse
+Alle drei Prozesse beginnen zeitgleich mit ihren Aufgaben.
+
+Der Eingabe-Thread liest kontinuierlich die Eingabedateien im Eingabeordner ein und stellt jeweils eine Datei als Datenobjekt zur Abholung bereit.
+In einer While-Schleife, die auf das Programmende horcht, holt sich der Verarbeits-Thread fortlaufend Datensätze von der Eingabe und führt die bereits beschriebenen Verarbeitungsschritte durch.
+Wenn die Verarbeitung abgeschlossen ist, wird der Datensatz über das von der Ausgabe bereitgestellte Interface weitergegeben.
+Auf der empfangenden Seite, also der Ausgabeinstanz, wird der Datensatz an eine Queue angefügt.
+Auch im Ausgabe-Thread läuft eine While-Schleife, die aufs Programmende horcht.
+In dieser wird jedes Mal der Head der Queue gegriffen und in eine Datei geschrieben.
+Bei jedem erfolgreichen Schreiben einer Datei wird die Steuerungsklasse benachrichtigt.
+Diese kann so erkennen, wenn alle Eingabedateien vollständig verarbeitet wurden.
+Dann wird jedem der drei Threads
+
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/ComponentDiagram1}
     \caption{
-        Komponentendiagramm, das das Zusammenspiel der Komponenten visualisiert.
+        Komponentendiagramm, das die Kommunikation der Komponenten visualisiert.
     }
     \label{fig:komoponent}
 \end{figure}
