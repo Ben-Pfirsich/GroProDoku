@@ -1,20 +1,40 @@
 \chapter{Verfahrensbeschreibung}\label{ch:verfahrensbeschreibung}
 
 \section{Beschreibung der realisierten Nebenläufigkeit}\label{sec:nebenl}
-Aus den in der Aufgabenanalyse beschriebenen Gründen, wurden die drei Komponenten Eingabe, Ausgabe und Verarbeitung als jeweils eigenen Threads implementiert.
+Aus den in der Aufgabenanalyse beschriebenen Gründen wurden die drei Komponenten Eingabe, Ausgabe und Verarbeitung als jeweils eigenen Threads implementiert.
 Die Klassen implementieren in der Java-Anwendung das Interface Runnable und können dadurch als eigene, unabhängige Prozesse gestartet werden.
-Die Initialisierung der Prozess wird in einer zentralen Steuerungsklasse durchgeführt.
+Die Initialisierung der Prozesse wird in einer zentralen Steuerungsklasse durchgeführt.
 Alle drei Prozesse beginnen zeitgleich mit ihren Aufgaben.
 
+
+\subsection{Eingabe}\label{subsec:eingabe}
 Der Eingabe-Thread liest kontinuierlich die Eingabedateien im Eingabeordner ein und stellt jeweils eine Datei als Datenobjekt zur Abholung bereit.
-In einer While-Schleife, die auf das Programmende horcht, holt sich der Verarbeits-Thread fortlaufend Datensätze von der Eingabe und führt die bereits beschriebenen Verarbeitungsschritte durch.
+Das Ganze wird intern mit einer Queue realisiert, von der immer das vorderste Element über die Schnittstelle zurückgegeben wird.
+Ein zusätzlicher Unterprozess entfernt alle 0,05 Sekunden das erste Element dieser Queue, um den Anforderungen gerecht zu werden.
+
+\subsection{Verarbeitung}\label{subsec:verarbeitung}
+Im Verarbeitungs-Thread, wird in einer While-Schleife in jedem Durchlauf ein Datensatz von der Eingabe abgeholt und verarbeitet.
+Um mehrfache Verarbeitung von einem gleichen Datensatz zu vermeiden, wird eine Liste mit den Namen der bereits bearbeiteten Sätze geführt.
 Wenn die Verarbeitung abgeschlossen ist, wird der Datensatz über das von der Ausgabe bereitgestellte Interface weitergegeben.
+
+\subsection{Ausgabe}\label{subsec:ausgabe}
 Auf der empfangenden Seite, also der Ausgabeinstanz, wird der Datensatz an eine Queue angefügt.
-Auch im Ausgabe-Thread läuft eine While-Schleife, die aufs Programmende horcht.
+Auch im Ausgabe-Thread läuft eine While-Schleife, die auf das Programmende horcht.
 In dieser wird jedes Mal der Head der Queue gegriffen und in eine Datei geschrieben.
 Bei jedem erfolgreichen Schreiben einer Datei wird die Steuerungsklasse benachrichtigt.
 Diese kann so erkennen, wenn alle Eingabedateien vollständig verarbeitet wurden.
-Dann wird jedem der drei Threads
+Dann wird jedem der drei Threads das Programmende gemeldet, sodass diese ihre Bearbeitung einstellen können.
+
+\subsection{Sonderfall}\label{subsec:sonderfall}
+Es ist außerdem wichtig, dass auch die Eingabe-Instanz eine Möglichkeit zur Kommunikation mit der Steuerung hat.
+Dadurch können defekte Eingabedateien gemeldet werden.
+In der aktuellen Implementierung wird in solchen Situationen über die bereits erwähnte Schnittstelle die Datei als verarbeitet gemeldet.
+So wird vermieden, dass das Programm endlos läuft.
+
+Gleiches gilt für Fehler in der Dateiausgabe.
+Der Datensatz wird trotzdem als bearbeitet gemeldet und die Anwendung terminiert.
+Das Zusammenspiel der Komponenten kann gut in Abbildung~\ref{fig:komoponent} beobachtet werden.
+
 
 
 \begin{figure}[htb]
@@ -64,7 +84,7 @@ Diese hängt von der Anzahl der Datenpunkte $N$ ab.
         \lfloor0.002 \cdot N \rfloor     & , \text{wenn} \lfloor0.002 \cdot N \rfloor \text{ungerade}
     \end{cases}
 \]
-Diese Breite wird nun halbiert, und gibt die distanz in jeweils eine x-Richtung an.
+Diese Breite wird nun halbiert und gibt die distanz in jeweils eine x-Richtung an.
 \[
     \tau = \frac{n - 1}{2}
 \]
@@ -72,7 +92,7 @@ Nun wird mit folgender Formel der gleitende Mittelwert für alle $N$ Datenpunkte
 \[
     x_k = \frac{1}{n} \sum_{i = 0}^{n - 1} \tilde{x}_{k-\tau+i}
 \]
-Für einen Punkt $k$ werden jeweils die $\tau$ vorherigen \~x-Werte, die $\tau$ nachfolgenden \~x-Werte und der aktuelle Wert an der Stelle $k$ aufaddiert.
+Für einen Punkt $k$ werden jeweils die $\tau$ vorherigen \~x-Werte, die $\tau$ nachfolgenden \~x-Werte und der aktuelle Wert an der Stelle $k$ addiert.
 Diese Summe wird dann durch die Anzahl der Summanden geteilt.
 Wenn das für alle $N$ gemacht wurde, kann im Graph eine Glättung erkannt werden (siehe Abbildung~\ref{fig:glaettung}).
 
@@ -108,7 +128,7 @@ Unter der Annahme, dass die Eingabedaten immer die Glockenform wie in Abbildung~
     \centering
     \includegraphics[width=0.8\linewidth]{images/EingabeInsgesamt}
     \caption{
-        Ein Plot eines Datensatzes aus der Eingabe.
+        Einzelner Datensatz aus einer Eingabedatei.
     }
     \label{fig:eingabe-plot}
 \end{figure}
@@ -116,14 +136,14 @@ Unter der Annahme, dass die Eingabedaten immer die Glockenform wie in Abbildung~
 Im ersten Schritt werden wieder der maximale y-Wert (durch die Normierung sollte dieser nun 1 sein) und sein zugehöriger Index berechnet.
 
 Dann wird vom Anfang der Liste der Datenpunkte (also grafisch von links aus) bis zum Index des Maximums iteriert.
-In jedem Iterations-Schritt wird ein Wert der oberen Einhüllenden geschrieben.
+In jedem Iterationsschritt wird ein Wert der oberen Einhüllenden geschrieben.
 Bei diesem Wert handelt es sich wieder um ein y-Maximum, das dynamisch während der Iteration gebildet wird.
 Initial hat dieses lokale Maximum den Wert $y_0$.
 Jedes Mal, wenn ein höherer y-Wert gefunden wird, überschreibt dieser das lokale Maximum.
-Wenn der Index des Maximums erreicht wurde, kann die gleiche Methode vom anderen Ende der Liste wiederholt werden.
+Wenn der Index des globalen Maximums erreicht wurde, kann die gleiche Methode vom anderen Ende der Liste wiederholt werden.
 Dort wird also das lokale Maximum initial auf $y_{N-1}$ gesetzt.
 
-Zuletzt darf nicht vergessen werden den Wert $y_{max}$ an der zugehörigen stelle in der oberen Einhüllenden einzutragen.
+Zuletzt darf nicht vergessen werden, den Wert $y_{max}$ an der zugehörigen Stelle in der oberen Einhüllenden einzutragen.
 
 \begin{figure}[htb]
     \centering
@@ -142,7 +162,7 @@ Zuletzt darf nicht vergessen werden den Wert $y_{max}$ an der zugehörigen stell
 \subsection{Pulsbreite}\label{subsec:pulsbreite}
 Im letzten Schritt der Verarbeitung soll die Pulsbreite berechnet werden.
 
-Zuerst muss dazu die Grundlinie berechnet werden.
+Zuerst muss dazu die Grundlinie ermittelt werden.
 Diese berechnet sich als arithmetisches Mittel der y-Werte aus den ersten 1\% der Messpunkte in der Liste.
 Also setze
 \[
@@ -173,13 +193,23 @@ Die Pulsbreite berechnet sich jetzt durch die x-Werte der beiden Datenpunkte.
     \label{fig:pulsbreite}
 \end{figure}
 
+\section{Datenstrukturen}\label{sec:datenstrukt}
+Zur effizienten Speicherung und performanten Verarbeitung wurden jeweils passende Datenstrukturen ausgewählt.
 
-\section{Gesamtsystem}\label{sec:gesamtsystem}
+Ein einzelner Messpunkt wird in einer einfachen Datenklasse mit dem Namen \enquote{AKDatum} gespeichert.
+Diese beinhalten jeweils ein Attribut des Datentyps Double für x- und y-Wert.
+Es wurde im gesamten Programm grundsätzlich mit Double-Werten gearbeitet, da in den Berechnungen häufig Skalierungen vorkommen.
 
-\subsection{Eingabe}\label{subsec:eingabe}
+Aus einer Eingabedatei entsteht jeweils ein Objekt der Klasse \enquote{AKDatensatz}.
+Dieses beinhaltet als Attribut eine Liste von AKDatum-Objekten.
+Es wurde hier eine dynamische \enquote{ArrayList} statt eines gewöhnlichen Feldes gewählt, da durch mögliche Kommentarzeilen in den Eingabedateien die Anzahl der Messpunkte nicht sofort ersichtlich ist.
+Beim Speichern der geglätteten X-Werte und der oberen Einhüllenden steht die Anzahl der Einträge bereits fest.
+Daher wurde hier aus Performanzgründen jeweils ein Java-Array gewählt.
+Alle in der Verarbeitung gewonnenen Informationen werden im AKDatensatz mit abgespeichert.
 
-\subsection{Verarbeitung}\label{subsec:verarbeitung}
+In der Ein- und Ausgabe werden zum Zwischenspeichern von Datensätzen Warteschlangen (engl. Queues) verwendet, genauer die \enquote{ConcurrentLinkedQueue}.
+Dies war besonders nützlich bei der Umsetzung der 0,05 Sekunden-Anforderung.
 
-\subsection{Ausgabe}\label{subsec:ausgabe}
 
-\subsection{Datenstrukturen}\label{subsec:datenstrukt}
+
+

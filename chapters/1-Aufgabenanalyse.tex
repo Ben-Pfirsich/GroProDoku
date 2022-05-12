@@ -13,18 +13,18 @@ Diese sind durchnummeriert von null bis neun und haben die folgende Namenskonven
 \end{center}
 Ein Datensatz enthält jeweils $N$ Messdaten, die aus zwei positiven Ganzzahlen bestehen.
 Die erste Zahl steht dabei für die Intensität des Messsignals und wird im Folgenden als y-Wert interpretiert.
-Die zweite Zahl bezeichnet die Spielposition und wird als \~x-Wert interpretiert.
-Der Spiegel ist eine Komponente des Autokorrelators die vor und zurück bewegt werden kann, um das Output-Signal zu manipulieren.
+Die zweite Zahl bezeichnet die Spiegelposition und wird als \~x-Wert interpretiert.
+Der Spiegel ist eine Komponente des Autokorrelators, die vor und zurück bewegt werden kann, um das Output-Signal zu manipulieren.
 
 Der einlesende Thread soll die zehn Textdateien in chronologischer Reihenfolge einlesen und in eine geeignete Datenstruktur überführen.
-Wenn zehnte Datei fertig bearbeitet wurde, soll wieder bei ersten begonnen werden.
-Dieses Verhalten wird fortgesetzt bis ein Signal zum Programmabbruch empfangen wird.
-Es soll hier das Verhalten im produktiven Betrieb simuliert werden, in dem nicht nur zehen Datensätze bearbeitet werden, sondern fortlaufend neue Datensätze vom Autokorrelator produziert werden.
+Wenn die zehnte Datei fertig bearbeitet wurde, soll wieder bei der ersten begonnen werden.
+Dieses Verhalten wird fortgesetzt, bis ein Signal zum Programmabbruch empfangen wird.
+Es soll hier das Verhalten im produktiven Betrieb simuliert werden, in dem nicht nur zehn Datensätze bearbeitet werden, sondern fortlaufend neue Datensätze vom Autokorrelator produziert werden.
 Der Einlese-Thread stellt jeden Datensatz für 0,05 Sekunden zur Abholung über eine Schnittstelle zur Verfügung.
 
 Der Verarbeitungs-Thread holt sich über diese Schnittstelle Datensätze, führt diverse Transformationen und Berechnungen durch und sendet die Ergebnisse an den Ausgabe-Thread.
 Es werden nur Datensätze verarbeitet, die die Verarbeitung vorher noch nicht durchlaufen haben.
-Auch die Verarbeitung läuft bis ein Signal zum Programmabbruch empfangen wird.
+Auch die Verarbeitung läuft, bis ein Signal zum Programmabbruch empfangen wird.
 
 Gleiches gilt für den Ausgabe-Thread.
 Dieser bietet eine Schnittstelle, über die verarbeitete Datensätze angenommen werden.
@@ -34,7 +34,7 @@ So kann erkannt werden, wenn alle Eingabedateien erfolgreich verarbeitet und aus
 Dann ist das Kriterium zum Programmende erreicht und alle Threads können beendet werden.
 
 \section{Eingabeformat}\label{sec:eingabe-format}
-Wie bereits beschrieben liegen die Datensätze in Textdateien.
+Wie bereits beschrieben, liegen die Datensätze in Textdateien.
 In diesen Dateien sind die einzelnen Messpunkte, bestehend aus \~x- und y-Wert, zeilenweise zu finden.
 An erster Stelle steht der y-Wert.
 Getrennt durch einen Tabulator folgt der \~x-Wert.
@@ -51,7 +51,7 @@ Zeilen die mit einem \#-Zeichen beginnen sind Kommentare und können ignoriert w
 
 \section{Ausgabeformat}\label{sec:ausgabeformat}
 Nach erfolgreicher Verarbeitung werden die Ergebnisse wieder in eine Textdatei geschrieben.
-Diese dateien haben den Namen der zugehörigen Eingabedatei mit dem zusätzlichen Präfix \enquote{out}.
+Diese Dateien haben den Namen der zugehörigen Eingabedatei mit dem zusätzlichen Präfix \enquote{out}.
 Die Eingabedatei \enquote{1.txt} hat dann z.B. \enquote{out1.txt}.
 
 In die erste Zeile werden die Informationen zur berechneten Pulsbreite (siehe Abschnitt~\ref{subsec:pulsbreite}) geschrieben.
@@ -62,9 +62,9 @@ Dabei soll das folgende Format verwendet werden:
 In den folgenden Zeilen sollen wieder zeilenweise die verarbeiteten Messpunkte stehen.
 Pro Zeile werden, jeweils getrennt durch einen Tabulator, erwartet:
 \begin{itemize}[noitemsep]
-    \item Der umgeformte und geglättete \~x-Wert.
-    \item Der skalierte y-Wert.
-    \item Der Wert der oberen Einhüllenden an der passenden Stelle.
+    \item Der umgeformte und geglättete \~x-Wert (siehe Abschnitt~\ref{subsec:glaettung}).
+    \item Der skalierte y-Wert (siehe Abschnitt~\ref{subsec:umrechnung-und-normierung}).
+    \item Der Wert der oberen Einhüllenden (siehe Abschnitt~\ref{subsec:ober-einh}) an der passenden Stelle.
 \end{itemize}
 
 \begin{figure}[htb]
@@ -82,22 +82,23 @@ Diese werden im Folgenden beschrieben.
 
 \subsection{Technische Fehler}\label{subsec:technische-fehler}
 Das Programm geht davon aus, dass die Anzahl der Testdateien mit dem angegebenen Wert übereinstimmt und dass die Dateien die oben genannte Namenskonvention einhalten.
-Ist das nicht der Fall, werden Zugriff auf die Dateien Fehler geworfen.
-Es kann auch sein, dass eine datei beim Zugriff blockiert ist (z.B. durch ein anderes Programm oder wegen fehlenden Berechtigungen).
+Ist das nicht der Fall, werden Fehler geworfen.
+
+Es kann auch sein, dass eine Datei beim Zugriff blockiert ist (z.B. durch ein anderes Programm oder wegen fehlenden Berechtigungen).
 Dies würde ebenso zu einer Fehlersituation führen.
 
-Auch bei der Ausgabe kann es beim Schreiben der Dateien zu technischen Fehler kommen.
+Auch bei der Ausgabe kann es beim Schreiben der Dateien aus selbigen Gründen zu technischen Fehler kommen.
 
 \subsection{Syntaktische Fehler}\label{subsec:syntaktische-fehler}
 Syntaktische Fehler treten auf, wenn die Eingabedateien nicht im richtigen Format vorliegen (Siehe Abschnitt~\ref{sec:eingabe-format}).
-Z.B. wenn statt dem Tabulator ein anderes Trennzeichen verwendet wird oder mehr als zwei Einträge in einer Zeile zu finden sind.
+Z.B. wenn an Stelle des Tabulators ein anderes Trennzeichen verwendet wird oder mehr als zwei Einträge in einer Zeile zu finden sind.
 
 \subsection{Semantische Fehler}\label{subsec:semantische-fehler}
 Auch semantische Fehler müssen bei der Eingabe überprüft werden.
 Es sind in den Eingabedateien nur positive Ganzzahlen als \~x- und y-Werte erlaubt.
 Außerdem sollten mindestens 500 gültige Einträge pro Datei vorhanden sein.
 Sonst kommt es beim Glätten der \~x-Werte nach der Berechnung $n = \lfloor 0.002 \cdot N \rfloor - 1$ zu Problemen.
-Ist $N$ hier kleiner als 500, dann wird $n$ negative und eignet sich nicht als Obergrenze für die Summe.
+Ist $N$ hier kleiner als 500, dann wird $n$ negative und eignet sich nicht als Intervallgröße.
 
 \section{Fehlerbehandlung}\label{sec:fehlerbehandlung}
 Die oben spezifizierten Fehler benötigen alle eine sinnvolle Fehlerbehandlung.
