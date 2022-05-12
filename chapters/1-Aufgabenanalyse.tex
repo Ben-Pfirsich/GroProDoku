@@ -35,15 +35,110 @@ Dann ist das Kriterium zum Programmende erreicht und alle Threads können beende
 
 \section{Mathematische Beschreibung der vier Algorithmen}\label{sec:mat-beschreibung}
 Die Verarbeitung wird jeweils auf einem einzelnen Datensatz aus der Eingabe durchgeführt.
-Dieser Datensatz kann beschrieben werden durch eine Liste aus Datenpunkten, die jeweils einen ~x- und einen y-Wert beinhalten.
+Dieser Datensatz kann beschrieben werden durch eine Liste aus $N$ Datenpunkten, die jeweils einen \~x- und einen y-Wert beinhalten.
 Aus den Datenpunkten wird in vier Verarbeitungsschritten das gewünschte Ergebnis gewonnen.
 
 \subsection{Umrechnung und Normierung der Daten}\label{subsec:umrechnung-und-normierung}
 Im ersten Schritt werden sowohl die \~x-Werte, als auch die y-Werte manipuliert.
 
 Die y-Werte werden normiert, indem jeder einzelne y-Wert durch den maximalen y-Wert geteilt wird.
+Also setzte $y_{max} = max(\bm{y})$ und berechne
+\[
+    y_k = \frac{y_k}{y_{max}}, \forall k \in [0, N - 1]
+\]
 Dafür werden zwei einfache Iterationen über die Datenliste benötigt:
 Die erste zum Bestimmen des maximalen y-Wertes und die zweite um jeden y-Wert mit dem Maximum zu skalieren.
+
+Jeder \~x-Wert wird durch die folgende Transformation in die Einheit Pikosekunden [ps] umgerechnet:
+\[
+    \tilde{x}_k = \frac{\tilde{x}_k}{2^{18} - 1} \cdot 266.3 - 132.3, \forall k \in [0, N - 1]
+\]
+Dieser Schritt benötigt lediglich eine Iteration und kann parallel zur zweiten Iteration der y-Normierung durchgeführt werden.
+
+\subsection{Glättung der Daten}\label{subsec:glaettung}
+Aufgrund von Messungenauigkeiten liegen die Sensordaten nicht in stetiger Form vor (siehe Abbildung~\ref{fig:vor-glaett}).
+Deshalb wird nun jeder der \~x-Werte durch einen gleitenden Mittelwert aus seiner Umgebung ersetzt.
+Für den gleitenden Mittelwert wird jedes Mal ein arithmetisches Mittel aus \~x-Werten in einem Intervall bestimmt.
+Die Details dieser Berechnung werden nun genauer erläutert.
+
+Im ersten Schritt wird die Breite des Intervalls festgelegt.
+Diese hängt von der Anzahl der Datenpunkte $N$ ab.
+\[
+    n =
+    \begin{cases}
+        \lfloor0.002 \cdot N \rfloor - 1 & , \text{wenn} \lfloor0.002 \cdot N \rfloor \text{gerade} \\
+        \lfloor0.002 \cdot N \rfloor     & , \text{wenn} \lfloor0.002 \cdot N \rfloor \text{ungerade}
+    \end{cases}
+\]
+Diese Breite wird nun halbiert, und gibt die distanz in jeweils eine x-Richtung an.
+\[
+    \tau = \frac{n - 1}{2}
+\]
+Nun wird mit folgender Formel der gleitende Mittelwert für alle $N$ Datenpunkte berechnet.
+\[
+    x_k = \frac{1}{n} \sum_{i = 0}^{n - 1} \tilde{x}_{k-\tau+i}
+\]
+Für einen Punkt $k$ werden jeweils die $\tau$ vorherigen \~x-Werte, die $\tau$ nachfolgenden \~x-Werte und der aktuelle Wert an der Stelle $k$ aufaddiert.
+Diese Summe wird dann durch die Anzahl der Summanden geteilt.
+Wenn das für alle $N$ gemacht wurde, kann im Graph eine Glättung erkannt werden (siehe Abbildung~\ref{fig:nach}).
+
+Bei der Berechnung des gleitenden Mittelwertes muss an den Rändern der Datenliste besonders Acht gegeben werden.
+Gilt für den Index $k-\tau+i < 0$ oder $k-\tau+i > N + 1$, dann kann hier kein \~x-Wert zugeordnet werden.
+Ein solcher Fall tritt z.B. auf, wenn $x_0$ berechnet werden soll.
+Dann ist es sinnvoll den Mittelwert aus allen Punkten im Intervall zu bilden, bei denen ein \~x-Wert zugeordnet werden kann.
+Da dadurch die Anzahl der Summanden geringer sein kann, muss der skalierende Faktor $\frac{1}{n}$ natürlich angepasst werden.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/Figure_2}
+    \caption{
+        x- und y-Werte geplottet vor der Skalierung, Normierung und Glättung.
+    }
+    \label{fig:vor-glaett}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/Figure_1}
+    \caption{
+        x- und y-Werte geplottet nach Skalierung, Normierung und Glättung.
+    }
+    \label{fig:nach}
+\end{figure}
+
+\subsection{Obere Einhüllende}\label{subsec:ober-einh}
+Es soll nun eine Funktion bestimmt werden, die die gegebenen Daten nach oben hin abschätzt.
+Diese wird für spätere Berechnungen benötigt.
+Die Funktion wird als Feld der länge $N$ gespeichert.
+Eine solche Funktion kann durch Bestimmen von lokalen Maxima bestimmt werden, was aber recht aufwändig ist.
+Unter der Annahme, dass die Eingabedaten immer die Glockenform wie in der Abbildung haben, kann die obere Einhüllende durch eine einfachere Methode approximiert werden.
+
+Im ersten Schritt werden wieder der maximale y-Wert (durch die Normierung sollte dieser nun 1 sein) und sein zugehöriger Index berechnet.
+
+Dann wird vom Anfang der Liste der Datenpunkte (also grafisch von links aus) bis zum Index des Maximums iteriert.
+In jedem Iterations-Schritt wird ein Wert der oberen Einhüllenden geschrieben.
+Bei diesem Wert handelt es sich wieder um ein y-Maximum, das dynamisch während der Iteration gebildet wird.
+Initial hat dieses lokale Maximum den Wert $y_0$.
+Jedes Mal, wenn ein höherer y-Wert gefunden wird, überschreibt dieser das lokale Maximum.
+Wenn der Index des Maximums erreicht wurde, kann die gleiche Methode vom anderen Ende der Liste wiederholt werden.
+Dort wird also das lokale Maximum initial auf $y_{N-1}$ gesetzt.
+
+Zuletzt darf nicht vergessen werden den Wert $y_{max}$ an der zugehörigen stelle in der oberen Einhüllenden einzutragen.
+
+\subsection{Pulsbreite}\label{subsec:pulsbreite}
+Im letzten Schritt der Verarbeitung soll die Pulsbreite berechnet werden.
+
+Zuerst muss dazu die Grundlinie berechnet werden.
+Diese berechnet sich als arithmetisches Mittel der y-Werte aus den ersten 1\% der Messpunkte in der Liste.
+Also setze
+\[
+    n = \lfloor0.01 \cdot N \rfloor
+\]
+und
+\[
+    Grundlinie = \frac{1}{n} \sum_{k = 0}^{n - 1} y_k
+\]
+Im Anschluss wird wieder der maximale y-Wert benötigt
 
 
 
