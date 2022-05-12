@@ -56,7 +56,7 @@ Jeder \~x-Wert wird durch die folgende Transformation in die Einheit Pikosekunde
 Dieser Schritt benötigt lediglich eine Iteration und kann parallel zur zweiten Iteration der y-Normierung durchgeführt werden.
 
 \subsection{Glättung der Daten}\label{subsec:glaettung}
-Aufgrund von Messungenauigkeiten liegen die Sensordaten nicht in stetiger Form vor (siehe Abbildung~\ref{fig:vor-glaett}).
+Aufgrund von Messungenauigkeiten liegen die Sensordaten nicht in stetiger Form vor (siehe Abbildung~\ref{fig:glaettung}).
 Deshalb wird nun jeder der \~x-Werte durch einen gleitenden Mittelwert aus seiner Umgebung ersetzt.
 Für den gleitenden Mittelwert wird jedes Mal ein arithmetisches Mittel aus \~x-Werten in einem Intervall bestimmt.
 Die Details dieser Berechnung werden nun genauer erläutert.
@@ -80,7 +80,7 @@ Nun wird mit folgender Formel der gleitende Mittelwert für alle $N$ Datenpunkte
 \]
 Für einen Punkt $k$ werden jeweils die $\tau$ vorherigen \~x-Werte, die $\tau$ nachfolgenden \~x-Werte und der aktuelle Wert an der Stelle $k$ aufaddiert.
 Diese Summe wird dann durch die Anzahl der Summanden geteilt.
-Wenn das für alle $N$ gemacht wurde, kann im Graph eine Glättung erkannt werden (siehe Abbildung~\ref{fig:nach}).
+Wenn das für alle $N$ gemacht wurde, kann im Graph eine Glättung erkannt werden (siehe Abbildung~\ref{fig:glaettung}).
 
 Bei der Berechnung des gleitenden Mittelwertes muss an den Rändern der Datenliste besonders Acht gegeben werden.
 Gilt für den Index $k-\tau+i < 0$ oder $k-\tau+i > N + 1$, dann kann hier kein \~x-Wert zugeordnet werden.
@@ -88,30 +88,36 @@ Ein solcher Fall tritt z.B. auf, wenn $x_0$ berechnet werden soll.
 Dann ist es sinnvoll den Mittelwert aus allen Punkten im Intervall zu bilden, bei denen ein \~x-Wert zugeordnet werden kann.
 Da dadurch die Anzahl der Summanden geringer sein kann, muss der skalierende Faktor $\frac{1}{n}$ natürlich angepasst werden.
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/Figure_2}
-    \caption{
-        x- und y-Werte geplottet vor der Skalierung, Normierung und Glättung.
-    }
-    \label{fig:vor-glaett}
-\end{figure}
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.8\linewidth]{images/Figure_1}
-    \caption{
-        x- und y-Werte geplottet nach Skalierung, Normierung und Glättung.
-    }
-    \label{fig:nach}
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/EingabeNichtGlatt}
+    \end{minipage}%
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/Geglättet}
+    \end{minipage}
+    \caption{Ausschnitt des eines Datensatzes vor (links) und nach (rechts) Skalierung, Normierung und Glättung.}
+    \label{fig:glaettung}
 \end{figure}
+
 
 \subsection{Obere Einhüllende}\label{subsec:ober-einh}
 Es soll nun eine Funktion bestimmt werden, die die gegebenen Daten nach oben hin abschätzt.
 Diese wird für spätere Berechnungen benötigt.
 Die Funktion wird als Feld der länge $N$ gespeichert.
 Eine solche Funktion kann durch Bestimmen von lokalen Maxima bestimmt werden, was aber recht aufwändig ist.
-Unter der Annahme, dass die Eingabedaten immer die Glockenform wie in der Abbildung haben, kann die obere Einhüllende durch eine einfachere Methode approximiert werden.
+Unter der Annahme, dass die Eingabedaten immer die Glockenform wie in Abbildung~\ref{fig:eingabe-plot} haben, kann die obere Einhüllende durch eine einfachere Methode approximiert werden.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/EingabeInsgesamt}
+    \caption{
+        Ein Plot eines Datensatzes aus der Eingabe.
+    }
+    \label{fig:eingabe-plot}
+\end{figure}
 
 Im ersten Schritt werden wieder der maximale y-Wert (durch die Normierung sollte dieser nun 1 sein) und sein zugehöriger Index berechnet.
 
@@ -124,6 +130,20 @@ Wenn der Index des Maximums erreicht wurde, kann die gleiche Methode vom anderen
 Dort wird also das lokale Maximum initial auf $y_{N-1}$ gesetzt.
 
 Zuletzt darf nicht vergessen werden den Wert $y_{max}$ an der zugehörigen stelle in der oberen Einhüllenden einzutragen.
+
+\begin{figure}[htb]
+    \centering
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/ObereEinhuellende}
+    \end{minipage}%
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/EinhüllendeNah}
+    \end{minipage}
+    \caption{Die obere Einhüllende, erstellt durch das beschriebene Verfahren.}
+    \label{fig:oberer-einh}
+\end{figure}
 
 \subsection{Pulsbreite}\label{subsec:pulsbreite}
 Im letzten Schritt der Verarbeitung soll die Pulsbreite berechnet werden.
@@ -138,9 +158,26 @@ und
 \[
     Grundlinie = \frac{1}{n} \sum_{k = 0}^{n - 1} y_k
 \]
-Im Anschluss wird wieder der maximale y-Wert benötigt
+Im Anschluss wird wieder der maximale y-Wert benötigt, um den Punkt auf halber Höhe von Grundlinie zum Maximum zu ermitteln.
+\[
+    Zielwert = \frac{y_{max} - Grundlinie}{2} + Grundlinie
+\]
+Nun wird jeweils von links und von rechts aus der erste Messpunkt gesucht, bei dem der y-Wert den Zielwert übersteigt.
+Das kann durch zwei einfache Iterationen über die Datenliste umgesetzt werden.
+Die Indizes dieser beiden Punkte werden gespeichert als $L$ für den Wert von links und als $R$ für den Wert von rechts.
+Die Pulsbreite berechnet sich jetzt durch die x-Werte der beiden Datenpunkte.
+\[
+    Pulsbreite = x_R - x_L
+\]
 
-
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/Pulsbreite}
+    \caption{
+        Die Pulsbreite eines verarbeiteten Datensatzes (die Länge der Gelben Linie).
+    }
+    \label{fig:pulsbreite}
+\end{figure}
 
 \section{Eingabeformat}\label{sec:eingabe-format}
 Wie bereits beschrieben liegen die Datensätze in Textdateien.
