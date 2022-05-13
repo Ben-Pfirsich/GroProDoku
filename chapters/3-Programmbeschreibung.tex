@@ -1,7 +1,13 @@
 \chapter{Programmbeschreibung}\label{ch:programmbeschreibung}
 
 \section{Entwurf}\label{sec:entwurf}
-In der Planung wurde das Strategie-Entwurfsmuster als
+In der Planung wurde das Strategie-Entwurfsmuster vorgegeben.
+Die Umsetzung davon kann gut im Klassendiagramm (Abbildung~\ref{fig:klassen-dia}) beobachtet werden:
+Die AKVerarbeitung arbeitet ausschließlich auf den Interfaces von Eingabe und Ausgabe, sodass Ein- und Ausgabestrategie ganz einfach ausgetauscht werden können.
+
+Den gesamten Ablauf eines Programmdurchlaufes kann man im Sequenzdiagramm (Abbildung~\ref{fig:sequenz}) nachverfolgen.
+
+Feinere Abläufe innerhalb der einzelnen Komponenten werden durch Nass-Shneiderman-Diagramme visualisiert (siehe Abschnitt ~\ref{sec:strukto}).
 \pagebreak
 
 \section{UML-Diagramme}\label{sec:uml}

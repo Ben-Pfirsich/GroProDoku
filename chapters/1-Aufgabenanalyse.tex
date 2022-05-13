@@ -96,9 +96,9 @@ Z.B. wenn an Stelle des Tabulators ein anderes Trennzeichen verwendet wird oder 
 \subsection{Semantische Fehler}\label{subsec:semantische-fehler}
 Auch semantische Fehler müssen bei der Eingabe überprüft werden.
 Es sind in den Eingabedateien nur positive Ganzzahlen als \~x- und y-Werte erlaubt.
-Außerdem sollten mindestens 500 gültige Einträge pro Datei vorhanden sein.
+Außerdem sollten mindestens 1000 gültige Einträge pro Datei vorhanden sein.
 Sonst kommt es beim Glätten der \~x-Werte nach der Berechnung $n = \lfloor 0.002 \cdot N \rfloor - 1$ zu Problemen.
-Ist $N$ hier kleiner als 500, dann wird $n$ negative und eignet sich nicht als Intervallgröße.
+Ist $N$ hier kleiner als 1000, dann wird $n$ kleiner als 2 und eignet sich nicht als Intervallgröße für den gleitenden Mittelwert.
 
 \section{Fehlerbehandlung}\label{sec:fehlerbehandlung}
 Die oben spezifizierten Fehler benötigen alle eine sinnvolle Fehlerbehandlung.
@@ -112,7 +112,7 @@ Ansonsten würde das Programm endlos weiterlaufen.
 \subsection{Syntaktische und Semantische Fehler}\label{subsec:syntaktische-semant-fehler-behandlung}
 Fehlerhafte Zeilen in den Eingabedateien werden ebenfalls auf der Konsole gemeldet und für die Verarbeitung ignoriert.
 Hat eine Datei in mehr als 50\% der Zeilen syntaktische oder semantische Fehler, wird sie nicht weiterverarbeitet.
-Selbiges gilt, wenn weniger als 500 fehlerfreie Einträge vorhanden sind.
+Selbiges gilt, wenn weniger als 1000 fehlerfreie Einträge vorhanden sind.
 
 
 
