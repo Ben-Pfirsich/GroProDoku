@@ -1,12 +1,51 @@
 \chapter{Zusammenfassung und Ausblick}\label{ch:zusammenfassung-und-ausblick}
 
 \section{Zusammenfassung}\label{sec:zusammenfassung}
-Es wurde ein Programm entwickelt, welches die geforderten Anforderungen erfüllt.
+Es wurde ein Programm entwickelt, welches die Verarbeitung von Signalen eines Autokorrelators wie gefordert umsetzt.
+
+Eingabe, Verarbeitung und Ausgabe laufen kontinuierlich in voneinander unabhängigen Prozessen.
+Datensätze werden mit einer Frequenz von 20 Hz, also für 0,05 Sekunden, von der Eingabe zur Verfügung gestellt.
+Die Verarbeitung verarbeitet keinen Datensatz doppelt und das Programm endet, wenn alle Datensätze ausgegeben wurden.
+Die Ergebnisse werden im erwünschten Format in Textdateien geschrieben, sodass sie z.B. in Python weiterverarbeitet werden können.
+
+Zudem wurde beim Entwurf besonders auf Erweiterbarkeit geachtet:
+Die Signaldatenquelle kann einfach ausgetauscht werden, indem das Eingabe-Interface mit einer neuen Strategie implementiert wird.
+Ebenso kann das Ausgabeformat bei Bedarf mit geringem Aufwand gewechselt werden.
+
+Die Verfahren und ihre mathematischen Details wurden ausführlich dokumentiert.
+Die Wahl von unterschiedlichen Datenstrukturen wurde begründet und der Programmentwurf ist durch diverse UML- und Nassi-Shneiderman-Diagramme gut nachvollziehbar.
+Für Entwickler wurde eine Dokumentation direkt im Source-Code erstellt.
+
 
 \section{Ausblick}\label{sec:ausblick}
-\begin{itemize}
-    \item Eigener Thread für jeden Datensatz.
-    \item Plot-Bibliothek direkt im Java-Code
-    \item Refactoring: Namensgebung der Schnittstellen, eigenes Ergebnisobjekt
-    \item Neue Einlesestrategien -> z.B. nicht aus Dateien, sondern aus Web-Schnittstelle
-\end{itemize}
+
+\subsection{Parallele Verarbeitung in den Komponenten}\label{subsec:parallel}
+Da im originalen Entwurf schon Threads verwendet wurden, ist es naheliegend diesen Ansatz nochmal zu verfeinern.
+Alle drei Komponenten könnten für die Bearbeitung von einzelne Datensätze jeweils einen eigenen Unterprozess starten.
+Konkret kann dieses Verhalten in Java mit dem \enquote{ExecutorService} und Java Futures umgesetzt werden.
+Besonders bei sehr großen Datensätzen könnte dadurch die Laufzeit des Programms verbessert werden.
+
+\subsection{Refactoring}\label{subsec:refactoring}
+Die Lesbarkeit des Codes ist an einigen Stellen verbesserungswürdig.
+
+So wird zum Beispiel bei Fehlern in der Ein- und Ausgabe die gleiche Schnittstelle (\enquote{meldeDatVerarbeitet}), wie bei der erfolgreichen Ausgabe verwendet.
+Das funktioniert, ist aber nicht besonders intuitiv.
+In Zukunft könnte hierfür eine eigene Fehlerschnittstelle implementiert werden.
+So könnten auch verbesserte Fehlerstatistiken gesammelt werden.
+
+Im Entwurf wurde für einen einzelnen Messpunkt eine eigene Klasse (AKDatum) vorgesehen.
+Diese hat aber in der aktuellen Implementierung keinen wirklichen Mehrwert, da nie auf einem einzelnen Datum gearbeitet wird, sondern immer nur auf dem Datensatz.
+Man könnte also überlegen die Liste der Datenpunkte durch zwei Listen mit Double-Werten zu ersetzen.
+
+\subsection{Logging und Monitoring}\label{subsec:log-moni}
+Wenn die Anwendung in den produktiven Betrieb genommen wird, sollte unbedingt ein Konzept zum Logging und Monitoring entwickelt werden.
+Die aktuelle Umsetzung schreibt Logging-Einträge auf die Konsole, was als \enquote{bad practice} angesehen wird.
+Stattdessen sollte hier eine Logging-Framework verwendet werden, beispielsweise die \enquote{Simple Logging Facade for Java} (SLF4J), die viele unterschiedliche Implementierungen hat (unter anderem Log4J).
+
+Um zudem eine bessere übersicht über die internen Vorgänge des Programms zu gewinnen, könnten durch Monitoring-Tools (z.B. Micrometer: \url{https://micrometer.io/}) unterschiedliche Metriken definiert werden.
+Diese könnte z.B. die Anzahl der verarbeiteten Datensätze, die Anzahl von Datensätzen innerhalb einer Komponente oder die Fehleranzahl in den Programmteilen dokumentieren.
+
+\subsection{Neue Eingabestrategie}\label{subsec:eingabestrat}
+In der Aufgabenstellung wurde angedeutet, dass sich die Art, wie Datensätze beim Programm ankommen, im produktiven Betrieb ändert.
+Dafür kann beispielsweise eine neue Eingabestrategie implementiert werden, die über eine Web-Schnittstelle Datensätze in Empfang nimmt.
+Eine SOAP-Schnittstelle, die XML-Daten entgegennimmt wäre hier eine mögliche Lösung.
