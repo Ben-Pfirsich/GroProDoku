@@ -96,13 +96,6 @@ Für einen Punkt $k$ werden jeweils die $\tau$ vorherigen \~x-Werte, die $\tau$ 
 Diese Summe wird dann durch die Anzahl der Summanden geteilt.
 Wenn das für alle $N$ gemacht wurde, kann im Graph eine Glättung erkannt werden (siehe Abbildung~\ref{fig:glaettung}).
 
-Bei der Berechnung des gleitenden Mittelwertes muss an den Rändern der Datenliste besonders Acht gegeben werden.
-Gilt für den Index $k-\tau+i < 0$ oder $k-\tau+i > N + 1$, dann kann hier kein \~x-Wert zugeordnet werden.
-Ein solcher Fall tritt z.B. auf, wenn $x_0$ berechnet werden soll.
-Dann ist es sinnvoll den Mittelwert aus allen Punkten im Intervall zu bilden, bei denen ein \~x-Wert zugeordnet werden kann.
-Da dadurch die Anzahl der Summanden geringer sein kann, muss der skalierende Faktor $\frac{1}{n}$ natürlich angepasst werden.
-
-
 \begin{figure}[htb]
     \centering
     \begin{minipage}{.5\textwidth}
@@ -116,6 +109,16 @@ Da dadurch die Anzahl der Summanden geringer sein kann, muss der skalierende Fak
     \caption{Ausschnitt des eines Datensatzes vor (links) und nach (rechts) Skalierung, Normierung und Glättung.}
     \label{fig:glaettung}
 \end{figure}
+\pagebreak
+Bei der Berechnung des gleitenden Mittelwertes muss an den Rändern der Datenliste besonders Acht gegeben werden.
+Gilt für den Index $k-\tau+i < 0$ oder $k-\tau+i > N + 1$, dann kann hier kein \~x-Wert zugeordnet werden.
+Ein solcher Fall tritt z.B. auf, wenn $x_0$ berechnet werden soll.
+Dann ist es sinnvoll den Mittelwert aus allen Punkten im Intervall zu bilden, bei denen ein \~x-Wert zugeordnet werden kann.
+Da dadurch die Anzahl der Summanden geringer sein kann, muss der skalierende Faktor $\frac{1}{n}$ natürlich angepasst werden.
+
+
+
+
 
 
 \subsection{Obere Einhüllende}\label{subsec:ober-einh}
