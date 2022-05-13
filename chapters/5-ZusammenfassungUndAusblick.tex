@@ -18,6 +18,8 @@ Für Entwickler wurde eine Dokumentation direkt im Source-Code erstellt.
 
 
 \section{Ausblick}\label{sec:ausblick}
+Das entwickelte Programm kann vielseitig erweitert und verbessert werden.
+Neben der Ausbesserung von kleinen Fehlern und technischen Schulden, gibt es viel Raum zur Implementierung von neuer Funktionalität.
 
 \subsection{Parallele Verarbeitung in den Komponenten}\label{subsec:parallel}
 Da im originalen Entwurf schon Threads verwendet wurden, ist es naheliegend diesen Ansatz nochmal zu verfeinern.
@@ -42,10 +44,10 @@ Wenn die Anwendung in den produktiven Betrieb genommen wird, sollte unbedingt ei
 Die aktuelle Umsetzung schreibt Logging-Einträge auf die Konsole, was als \enquote{bad practice} angesehen wird.
 Stattdessen sollte hier eine Logging-Framework verwendet werden, beispielsweise die \enquote{Simple Logging Facade for Java} (SLF4J), die viele unterschiedliche Implementierungen hat (unter anderem Log4J).
 
-Um zudem eine bessere übersicht über die internen Vorgänge des Programms zu gewinnen, könnten durch Monitoring-Tools (z.B. Micrometer: \url{https://micrometer.io/}) unterschiedliche Metriken definiert werden.
+Um zudem eine bessere Übersicht über die internen Vorgänge des Programms zu gewinnen, könnten durch Monitoring-Tools (z.B. Micrometer: \url{https://micrometer.io/}) unterschiedliche Metriken definiert werden.
 Diese könnte z.B. die Anzahl der verarbeiteten Datensätze, die Anzahl von Datensätzen innerhalb einer Komponente oder die Fehleranzahl in den Programmteilen dokumentieren.
 
 \subsection{Neue Eingabestrategie}\label{subsec:eingabestrat}
 In der Aufgabenstellung wurde angedeutet, dass sich die Art, wie Datensätze beim Programm ankommen, im produktiven Betrieb ändert.
 Dafür kann beispielsweise eine neue Eingabestrategie implementiert werden, die über eine Web-Schnittstelle Datensätze in Empfang nimmt.
-Eine SOAP-Schnittstelle, die XML-Daten entgegennimmt wäre hier eine mögliche Lösung.
+Eine SOAP-Schnittstelle, die XML-Daten entgegennimmt, wäre hier eine mögliche Lösung.

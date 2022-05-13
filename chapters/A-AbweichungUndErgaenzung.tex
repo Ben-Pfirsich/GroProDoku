@@ -1,6 +1,24 @@
 \chapter{Abweichung und Ergänzung}\label{ch:abweichung-und-ergaenzung}
+Der grundlegende Entwurf hat sich nicht verändert, in der originalen Interpretation waren aber einige Fehler und Ungenauigkeiten, die ausgebessert werden mussten.
+Diese werden nun beschrieben.
+
+\section{Abweichungen}\label{sec:abweich}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Fehler beim Sonderfall zur Datenglättung:} An den Rändern der Liste mit den Datenpunkten musste bei der Glättung der x-Daten besonders aufgepasst werden, weil dort weniger Punkte für den gleitenden Mittelwert vorhanden sind.
+    In der ersten Interpretation wurde fälschlicherweise davon ausgegangen, dass die Werte nicht nach den x-Werten sortiert vorliegen.
+    Daher wurden für den gleitenden Mittelwert Punkte vom anderen Ende der Liste verwendet.
+    In der tatsächlichen Implementierung ist dieser Fehler aufgefallen und wurde stattdessen wie in Abschnitt~\ref{subsec:glaettung} beschrieben umgesetzt.
+    \item \textbf{Zähler für erfolgreiche Ausgabe:} Der Zähler, der der Indikator für das Programmende ist, wurde wie original geplant an zentraler Stelle in der Steuerung definiert.
+    Im ursprünglichen Sequenzdiagramm wird dieser aber in der Ausgabe-Instanz verwaltet.
+    Diese Inkonsistenz wurde ausgebessert.
+    \item \textbf{Name von Methoden:} Weil bei der Planung viele Implementierungsdetails noch nicht bekannt waren, haben sich die Namen von vielen der Methoden im Vergleich zum ersten Klassendiagramm verändert (z.B. \enquote{run()} statt \enquote{starteVerarbeitung}).
+\end{itemize}
+
+\section{Ergänzungen}\label{sec:erg}
 
 \begin{itemize}
-    \item Fehler beim Sonderfall zur Datenglättung -> Angepasst
-    \item Diverse Attribute und Methoden
+    \item \textbf{Schnittstellen zwischen den Komponenten:} Im originalen Klassendiagramm waren die Schnittstellen zwischen Eingabe, Verarbeitung und Ausgabe aus Zeitgründen nicht definiert.
+    Diese wurden im Nachhinein genau spezifiziert.
+    \item \textbf{Diverse Attribute und Hilfsmethoden:} Bei der Implementierung sind viele weitere Methoden und Attribute hinzugekommen, z.B. die Queues als Zwischenspeicher für Datensätze.
 \end{itemize}
