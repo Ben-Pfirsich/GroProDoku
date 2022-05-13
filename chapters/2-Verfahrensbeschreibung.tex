@@ -109,15 +109,12 @@ Wenn das für alle $N$ gemacht wurde, kann im Graph eine Glättung erkannt werde
     \caption{Ausschnitt des eines Datensatzes vor (links) und nach (rechts) Skalierung, Normierung und Glättung.}
     \label{fig:glaettung}
 \end{figure}
-\pagebreak
+%\pagebreak
 Bei der Berechnung des gleitenden Mittelwertes muss an den Rändern der Datenliste besonders Acht gegeben werden.
 Gilt für den Index $k-\tau+i < 0$ oder $k-\tau+i > N + 1$, dann kann hier kein \~x-Wert zugeordnet werden.
 Ein solcher Fall tritt z.B. auf, wenn $x_0$ berechnet werden soll.
 Dann ist es sinnvoll den Mittelwert aus allen Punkten im Intervall zu bilden, bei denen ein \~x-Wert zugeordnet werden kann.
 Da dadurch die Anzahl der Summanden geringer sein kann, muss der skalierende Faktor $\frac{1}{n}$ natürlich angepasst werden.
-
-
-
 
 
 
@@ -136,7 +133,7 @@ Unter der Annahme, dass die Eingabedaten immer die Glockenform wie in Abbildung~
     \label{fig:eingabe-plot}
 \end{figure}
 
-Im ersten Schritt werden wieder der maximale y-Wert (durch die Normierung sollte dieser nun 1 sein) und sein zugehöriger Index berechnet.
+Im ersten Schritt werden wieder der maximale y-Wert (durch die Normierung sollte dieser jetzt 1 sein) und sein zugehöriger Index berechnet.
 
 Dann wird vom Anfang der Liste der Datenpunkte (also grafisch von links aus) bis zum Index des Maximums iteriert.
 In jedem Iterationsschritt wird ein Wert der oberen Einhüllenden geschrieben.
@@ -191,7 +188,7 @@ Die Pulsbreite berechnet sich jetzt durch die x-Werte der beiden Datenpunkte.
     \centering
     \includegraphics[width=0.7\linewidth]{images/Pulsbreite}
     \caption{
-        Die Pulsbreite eines verarbeiteten Datensatzes (die Länge der Gelben Linie).
+        Die Pulsbreite des verarbeiteten Datensatzes entspricht der Länge der gelben Linie.
     }
     \label{fig:pulsbreite}
 \end{figure}
